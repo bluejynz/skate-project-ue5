@@ -2,6 +2,7 @@
 
 
 #include "MainCharacter.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/InputComponent.h"
@@ -81,6 +82,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
     PlayerInputComponent->BindAxis("MoveForward", this, &AMainCharacter::MoveForward);
     PlayerInputComponent->BindAxis("MoveSideways", this, &AMainCharacter::MoveRight);
 
+    PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+    PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 }
 
 void AMainCharacter::MoveForward(float Value)
@@ -102,8 +105,6 @@ void AMainCharacter::MoveRight(float Value)
     {
         // Calculate rotation speed based on current speed
         float ModifiedRotationSpeed = RotationSpeed + (CurrentSpeed * .01f);
-
-        UE_LOG(LogTemp, Log, TEXT("Rotation speed: %f"), ModifiedRotationSpeed);
 
         // Rotate character in input's direction
         AddControllerYawInput(Value * ModifiedRotationSpeed * GetWorld()->GetDeltaSeconds());
