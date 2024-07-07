@@ -30,25 +30,47 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate;
 
-	// Pointer to the existing ArrowComponent
+	/** Pointer to the existing ArrowComponent */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UArrowComponent* MovementDirectionArrow;
+
+	/** Speed for rotation */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	float RotationSpeed;
+
+	/** Maximum movement speed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float MaxSpeed;
+
+	/** Rate for accelaration */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float AccelerationRate;
+
+	/** Rate for decelaration */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float DecelerationRate;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	float CurrentSpeed;
+	bool bIsAccelerating;
+
 	/** Called for forwards input */
 	void MoveForward(float Value);
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
+
+	/** Called to manage acceleration/deceleration */
+	void ManageAcceleration(float DeltaTime);
 
 };

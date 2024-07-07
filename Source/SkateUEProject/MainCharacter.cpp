@@ -8,6 +8,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/ArrowComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Engine/Engine.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -39,8 +41,19 @@ AMainCharacter::AMainCharacter()
     BaseTurnRate = 65.f;
     BaseLookUpRate = 65.f;
 
+    // Set speed when turning sideways
+    RotationSpeed = 30.f;
+
+    MaxSpeed = 1400.f;
+    AccelerationRate = 500.f;
+    DecelerationRate = 500.f;
+
+    CurrentSpeed = 0.f;
+    bIsAccelerating = false;
+
     // Initialize the pointer to the existing ArrowComponent
     MovementDirectionArrow = FindComponentByClass<UArrowComponent>();
+
 
 }
 
@@ -48,7 +61,6 @@ AMainCharacter::AMainCharacter()
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -56,6 +68,7 @@ void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    ManageAcceleration(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -66,27 +79,52 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
     check(PlayerInputComponent);
 
     PlayerInputComponent->BindAxis("MoveForward", this, &AMainCharacter::MoveForward);
-    PlayerInputComponent->BindAxis("MoveRight", this, &AMainCharacter::MoveRight);
+    PlayerInputComponent->BindAxis("MoveSideways", this, &AMainCharacter::MoveRight);
 
 }
 
 void AMainCharacter::MoveForward(float Value)
 {
-    if ((Controller != nullptr) && (Value != 0.0f) && MovementDirectionArrow)
+    if ((Controller != nullptr) && (Value != 0.0f))
     {
-        // Determine the forward direction based on the arrow component
-        const FVector Direction = MovementDirectionArrow->GetForwardVector();
-        AddMovementInput(Direction, Value);
+        bIsAccelerating = true;
+
+    }
+    else 
+    {
+        bIsAccelerating = false;
     }
 }
 
 void AMainCharacter::MoveRight(float Value)
 {
-    if ((Controller != nullptr) && (Value != 0.0f) && MovementDirectionArrow)
+    if ((Controller != nullptr) && (Value != 0.0f))
     {
-        // Determine the right direction based on the arrow component
-        const FVector Direction = MovementDirectionArrow->GetRightVector();
-        AddMovementInput(Direction, Value);
+        // Calculate rotation speed based on current speed
+        float ModifiedRotationSpeed = RotationSpeed + (CurrentSpeed * .01f);
+
+        UE_LOG(LogTemp, Log, TEXT("Rotation speed: %f"), ModifiedRotationSpeed);
+
+        // Rotate character in input's direction
+        AddControllerYawInput(Value * ModifiedRotationSpeed * GetWorld()->GetDeltaSeconds());
     }
+}
+
+void AMainCharacter::ManageAcceleration(float DeltaTime)
+{
+    if (bIsAccelerating)
+    {
+        CurrentSpeed = FMath::Min(CurrentSpeed + AccelerationRate * DeltaTime, MaxSpeed);
+    }
+    else
+    {
+        CurrentSpeed = FMath::Max(CurrentSpeed - DecelerationRate * DeltaTime, 0.f);
+    }
+
+    // Moves forward int the direction of the character's foward direction and add movement
+    const FVector Direction = GetActorForwardVector();
+    AddMovementInput(Direction, CurrentSpeed);
+
+    GetCharacterMovement()->MaxWalkSpeed = CurrentSpeed;
 }
 
