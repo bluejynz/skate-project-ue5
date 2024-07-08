@@ -35,20 +35,26 @@ public:
 	UArrowComponent* MovementDirectionArrow;
 
 	/** Speed for rotation */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
 	float RotationSpeed;
 
 	/** Maximum movement speed */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float MaxSpeed;
 
 	/** Rate for accelaration */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float AccelerationRate;
 
 	/** Rate for decelaration */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	float DecelerationRate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	float CurrentSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bIsAccelerating;
 
 protected:
 	// Called when the game starts or when spawned
@@ -61,9 +67,6 @@ private:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	float CurrentSpeed;
-	bool bIsAccelerating;
-
 	/** Called for forwards input */
 	void MoveForward(float Value);
 
@@ -72,5 +75,8 @@ private:
 
 	/** Called to manage acceleration/deceleration */
 	void ManageAcceleration(float DeltaTime);
+
+	/** Called to calculate jump velocity */
+	void CalculateJumpVelocity();
 
 };

@@ -52,6 +52,8 @@ AMainCharacter::AMainCharacter()
     CurrentSpeed = 0.f;
     bIsAccelerating = false;
 
+    GetCharacterMovement()->JumpZVelocity = 600.f;
+
     // Initialize the pointer to the existing ArrowComponent
     MovementDirectionArrow = FindComponentByClass<UArrowComponent>();
 
@@ -62,6 +64,8 @@ AMainCharacter::AMainCharacter()
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+    CalculateJumpVelocity();
 }
 
 // Called every frame
@@ -127,5 +131,14 @@ void AMainCharacter::ManageAcceleration(float DeltaTime)
     AddMovementInput(Direction, CurrentSpeed);
 
     GetCharacterMovement()->MaxWalkSpeed = CurrentSpeed;
+}
+
+void AMainCharacter::CalculateJumpVelocity()
+{
+    float JumpDuration = 1.933f;/*
+    float MaxJumpHeight = 300.f;
+    float JumpVelocity = (2 * MaxJumpHeight) / JumpDuration;
+
+    GetCharacterMovement()->JumpZVelocity = JumpVelocity;*/
 }
 
