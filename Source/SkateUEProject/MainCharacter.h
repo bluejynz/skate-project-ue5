@@ -76,7 +76,8 @@ private:
 	/** Called to manage acceleration/deceleration */
 	void ManageAcceleration(float DeltaTime);
 
-	/** Called to calculate jump velocity */
-	void CalculateJumpVelocity();
+	// Input functions for mouse movement
+	void Turn(float Rate);
+	void LookUp(float Rate);
 
 };

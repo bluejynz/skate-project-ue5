@@ -64,8 +64,6 @@ AMainCharacter::AMainCharacter()
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-    CalculateJumpVelocity();
 }
 
 // Called every frame
@@ -88,6 +86,9 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
     PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
     PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+    PlayerInputComponent->BindAxis("CameraYaw", this, &AMainCharacter::Turn);
+    PlayerInputComponent->BindAxis("CameraPitch", this, &AMainCharacter::LookUp);
 }
 
 void AMainCharacter::MoveForward(float Value)
@@ -115,6 +116,17 @@ void AMainCharacter::MoveRight(float Value)
     }
 }
 
+
+void AMainCharacter::Turn(float Rate)
+{
+    AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AMainCharacter::LookUp(float Rate)
+{
+    AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
 void AMainCharacter::ManageAcceleration(float DeltaTime)
 {
     if (bIsAccelerating)
@@ -132,13 +144,3 @@ void AMainCharacter::ManageAcceleration(float DeltaTime)
 
     GetCharacterMovement()->MaxWalkSpeed = CurrentSpeed;
 }
-
-void AMainCharacter::CalculateJumpVelocity()
-{
-    float JumpDuration = 1.933f;/*
-    float MaxJumpHeight = 300.f;
-    float JumpVelocity = (2 * MaxJumpHeight) / JumpDuration;
-
-    GetCharacterMovement()->JumpZVelocity = JumpVelocity;*/
-}
-
