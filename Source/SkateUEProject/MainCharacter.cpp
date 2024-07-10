@@ -18,6 +18,9 @@ AMainCharacter::AMainCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+    // Set score to 0
+    Score = 0;
+
     // Set the character to auto-possess player 0
     AutoPossessPlayer = EAutoReceiveInput::Player0;
 
@@ -143,4 +146,9 @@ void AMainCharacter::ManageAcceleration(float DeltaTime)
     AddMovementInput(Direction, CurrentSpeed);
 
     GetCharacterMovement()->MaxWalkSpeed = CurrentSpeed;
+}
+
+void AMainCharacter::AddToScore(int Value)
+{
+    Score += Value;
 }

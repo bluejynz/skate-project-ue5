@@ -56,6 +56,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	bool bIsAccelerating;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Score")
+	int Score;
+
+	UFUNCTION()
+	void AddToScore(int Value);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
